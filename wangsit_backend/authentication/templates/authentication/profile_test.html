@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Update Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            display: none;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Profile Update Test</h1>
+        
+        <div class="form-group">
+            <label for="token">JWT Token:</label>
+            <input type="text" id="token" placeholder="Paste your JWT token here">
+        </div>
+        
+        <h2>Get Profile</h2>
+        <button id="getProfile">Get Profile</button>
+        
+        <div id="profileResult" class="result">
+            <h3>Profile Data:</h3>
+            <pre id="profileData"></pre>
+        </div>
+        
+        <h2>Update Asal Sekolah</h2>
+        <div class="form-group">
+            <label for="asalSekolah">Asal Sekolah:</label>
+            <input type="text" id="asalSekolah" placeholder="Enter your school name">
+        </div>
+        
+        <button id="updateProfile">Update Profile</button>
+        
+        <div id="updateResult" class="result">
+            <h3>Update Result:</h3>
+            <pre id="updateData"></pre>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('getProfile').addEventListener('click', async function() {
+            const token = document.getElementById('token').value;
+            
+            if (!token) {
+                alert('Please enter a JWT token');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/me', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const result = await response.json();
+                
+                document.getElementById('profileData').textContent = JSON.stringify(result, null, 2);
+                document.getElementById('profileResult').style.display = 'block';
+                
+                if (result.asal_sekolah) {
+                    document.getElementById('asalSekolah').value = result.asal_sekolah;
+                }
+            } catch (error) {
+                alert('Error fetching profile: ' + error.message);
+            }
+        });
+        
+        document.getElementById('updateProfile').addEventListener('click', async function() {
+            const token = document.getElementById('token').value;
+            const asalSekolah = document.getElementById('asalSekolah').value;
+            print('Updating profile with token:', token, 'and asal_sekolah:', asalSekolah);
+            
+            if (!token) {
+                alert('Please enter a JWT token');
+                return;
+            }
+            
+            if (!asalSekolah) {
+                alert('Please enter an asal sekolah value');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/me/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        asal_sekolah: asalSekolah
+                    })
+                });
+                
+                const result = await response.json();
+                
+                document.getElementById('updateData').textContent = JSON.stringify(result, null, 2);
+                document.getElementById('updateResult').style.display = 'block';
+            } catch (error) {
+                alert('Error updating profile: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html> 

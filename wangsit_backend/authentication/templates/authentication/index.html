@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google OAuth Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .button {
+            display: inline-block;
+            background-color: #4285F4;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google OAuth2 Testing</h1>
+    
+    <div class="card">
+        <h2>Login with Google</h2>
+        <p>This page demonstrates how to use Google OAuth with Django Ninja.</p>
+        <a href="/api/auth/google/login/?redirect_uri=http://localhost:8000/api/auth/callback/" class="button">
+            Sign in with Google
+        </a>
+    </div>
+    
+    <div class="card">
+        <h2>Integration Guide</h2>
+        <p>To integrate with a frontend application:</p>
+        <ol>
+            <li>Redirect users to: <code>/api/auth/google/login/?redirect_uri=YOUR_CALLBACK_URL</code></li>
+            <li>Handle the callback with authorization code</li>
+            <li>Exchange the code for a token by sending a POST request to <code>/api/auth/google</code></li>
+        </ol>
+        
+        <h3>Example Frontend Code:</h3>
+        <pre>
+// Redirect to Google login
+function loginWithGoogle() {
+    window.location.href = 
+        "http://localhost:8000/api/auth/google/login/?redirect_uri=http://localhost:3000/auth";
+}
+
+// Handle the callback
+async function handleCallback(code) {
+    const response = await fetch('http://localhost:8000/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            code: code,
+            redirect_uri: 'http://localhost:3000/auth'
+        })
+    });
+    
+    const data = await response.json();
+    localStorage.setItem('token', data.access_token);
+}
+        </pre>
+    </div>
+    
+    <div class="card" id="result" style="display: none;">
+        <h2>Authentication Result</h2>
+        <div id="auth-data"></div>
+    </div>
+
+    <script>
+        // Check for code parameter in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        
+        if (code) {
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('auth-data').innerHTML = 
+                `<p>Authorization code received: ${code}</p>
+                <p>You can now exchange this code for a token by making a POST request to /api/auth/google</p>`;
+        }
+    </script>
+</body>
+</html> 
