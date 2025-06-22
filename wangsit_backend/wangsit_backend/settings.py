@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@gnnhztwi=)@=0jbgy3v5dlx!6gd!3i-366#v5n!l&5yjr+##c'
+SECRET_KEY = config('SECRET_KEY', default='your-default-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -168,8 +168,8 @@ AUTHENTICATION_BACKENDS = (
 
 # Google OAuth2 settings
 # Using hardcoded credentials from the existing config to ensure they work
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "804725134572-dg556q2hrnj1b66f01lk0vdn02mtc6fk.apps.googleusercontent.com"
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "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"
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config('GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config('GOOGLE_OAUTH2_SECRET')
 
 # Add allowed redirect URIs - these must be registered in Google Cloud Console
 SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = "http://localhost:3000/auth/callback"
